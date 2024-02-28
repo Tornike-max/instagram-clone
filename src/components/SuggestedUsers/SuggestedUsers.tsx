@@ -1,8 +1,16 @@
 import { Flex, Text, VStack } from "@chakra-ui/react";
-// import SuggestedUser from "./SuggestedUser";
 import SuggestedHeader from "./SuggestedHeader";
+import { useSuggestedUsers } from "../../hooks/useSuggestedUsers";
+import SuggestedUser from "./SuggestedUser";
+import { DocumentData } from "firebase/firestore";
+import useUserProfileStore from "../../store/userProfileStore";
 
 export default function SuggestedUsers() {
+  const { isLoading, suggestedUsers } = useSuggestedUsers();
+  const setUser = useUserProfileStore((state) => state.setUserProfile);
+
+  if (isLoading) return null;
+
   return (
     <VStack py={8} px={2} gap={4}>
       <SuggestedHeader />
@@ -19,11 +27,10 @@ export default function SuggestedUsers() {
           See all
         </Text>
       </Flex>
-      {/* <SuggestedUser
-        name="Ozbeta"
-        followers={1392}
-        avatar={"https://bit.ly/dan-abramov"}
-      /> */}
+      {suggestedUsers &&
+        suggestedUsers.map((user: DocumentData | null) => (
+          <SuggestedUser user={user} setUser={setUser} key={user?.uid} />
+        ))}
 
       <Flex w="full" justifyContent={"center"} alignItems={"center"} gap={1}>
         <Text>@2024 Build by</Text>

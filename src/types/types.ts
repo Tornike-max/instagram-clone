@@ -17,3 +17,13 @@ export type EditAuthUserType = {
   bio: string;
   profilePicURL: string;
 };
+
+export type PostType = {
+  caption: string;
+  likes: never[];
+  comments: never[];
+  createdAt: number;
+  createdBy: string;
+  imageURL: string;
+  id?: string;
+};

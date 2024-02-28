@@ -2,13 +2,14 @@ import { Avatar, Box, Button, Flex, Text } from "@chakra-ui/react";
 import { DocumentData } from "firebase/firestore";
 import { useFollowUser } from "../../hooks/useFollowUser";
 import { useAuthStore } from "../../store/authStore";
+import { UserType } from "../../types/types";
 
 export default function SuggestedUser({
   user,
   setUser,
 }: {
   user: DocumentData | null;
-  setUser: React.Dispatch<React.SetStateAction<DocumentData | null>>;
+  setUser: React.Dispatch<React.SetStateAction<DocumentData | UserType>>;
 }) {
   const { isFollowing, isUpdating, handleFollowUser } = useFollowUser(
     user?.uid

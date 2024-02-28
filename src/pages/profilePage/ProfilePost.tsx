@@ -19,10 +19,51 @@ import { FaComment } from "react-icons/fa";
 import { HiOutlineTrash } from "react-icons/hi2";
 import ProfilePostComment from "./ProfilePostComment";
 import PostFooter from "../../components/FeedPosts/PostFooter";
+import { PostType } from "../../types/types";
+import useUserProfileStore from "../../store/userProfileStore";
+import { useAuthStore } from "../../store/authStore";
+import { useShowToast } from "../../hooks/useShowToast";
+import { deleteObject, ref } from "firebase/storage";
+import { firestore, storage } from "../../firebase/firebase";
+import { arrayRemove, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { usePostsStore } from "../../store/userPostsStore";
+import { useState } from "react";
 
-export default function ProfilePost({ img }: { img: string }) {
+export default function ProfilePost({ post }: { post: PostType }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const userProfile = useUserProfileStore((state) => state.userProfile);
+  const deletePost = usePostsStore((state) => state.deletePost);
+  const authUser = useAuthStore((state) => state.user);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const showToast = useShowToast();
+  const deleteUserProfilePost = useUserProfileStore(
+    (state) => state.deletePost
+  );
+  console.log(post);
 
+  const handleDeletePost = async () => {
+    if (isDeleting) return;
+    try {
+      setIsDeleting(true);
+      const imageRef = ref(storage, `posts/${post.id}`);
+      await deleteObject(imageRef);
+
+      const userRef = authUser && doc(firestore, "users", authUser?.uid);
+      await deleteDoc(doc(firestore, "posts", post.id));
+
+      userRef &&
+        (await updateDoc(userRef, {
+          posts: arrayRemove(post.id),
+        }));
+      deletePost(post.id || "");
+      deleteUserProfilePost(post.id || "");
+      showToast("Success", "Post Deleted Successfully", "success");
+    } catch (error) {
+      showToast("Error", "Error while deleting post", "error");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
   return (
     <>
       <GridItem
@@ -52,20 +93,20 @@ export default function ProfilePost({ img }: { img: string }) {
             <Flex>
               <AiFillHeart size={20} />
               <Text fontWeight={"bold"} ml={2}>
-                120{" "}
+                {post.likes.length}
               </Text>
             </Flex>
 
             <Flex>
               <FaComment size={20} />
               <Text fontWeight={"bold"} ml={2}>
-                63{" "}
+                {post.comments.length}
               </Text>
             </Flex>
           </Flex>
         </Flex>
         <Image
-          src={img}
+          src={post.imageURL}
           alt={"profile post"}
           w={"100%"}
           h={"100%"}
@@ -83,15 +124,23 @@ export default function ProfilePost({ img }: { img: string }) {
           <ModalCloseButton />
           <ModalBody pb={5} backgroundColor={"black"}>
             <Flex
-              gap={2}
+              gap={4}
               w={{ base: "90%", sm: "70%", md: "full" }}
               mx={"auto"}
               maxH={"90vh"}
               minH={"50vh"}
             >
-              <Flex flex={1.5}>
+              <Flex
+                flex={1.5}
+                borderRadius={4}
+                overflow={"hidden"}
+                border={"1px solid"}
+                borderColor={"whiteAlpha.300"}
+                justifyContent={"center"}
+                alignItems={"center"}
+              >
                 <Image
-                  src={img}
+                  src={post.imageURL}
                   alt={"profile post"}
                   w={"100%"}
                   h={"100%"}
@@ -114,13 +163,18 @@ export default function ProfilePost({ img }: { img: string }) {
                     justifyContent={"space-between"}
                   >
                     <Flex alignItems={"center"} gap={3}>
-                      <Avatar src={"https://bit.ly/dan-abramov"} size="md" />
-                      <Text fontWeight={"bold"}>Tornike Ozbetelashvili</Text>
+                      <Avatar src={userProfile?.profilePicURL} size="md" />
+                      <Text fontWeight={"bold"}>{userProfile?.fullname}</Text>
                     </Flex>
                     <Flex alignItems={"flex-start"} pr={2}>
-                      <Button _hover={{ color: "red" }}>
-                        <HiOutlineTrash />
-                      </Button>
+                      {authUser?.uid === userProfile?.uid && (
+                        <Button
+                          onClick={handleDeletePost}
+                          _hover={{ color: "red" }}
+                        >
+                          <HiOutlineTrash />
+                        </Button>
+                      )}
                     </Flex>
                   </Flex>
 
@@ -138,17 +192,17 @@ export default function ProfilePost({ img }: { img: string }) {
                     <ProfilePostComment
                       src={"https://bit.ly/tioluwani-kolawole"}
                     />
-                    <ProfilePostComment src={"https://bit.ly/kent-c-dodds"} />
-                    <ProfilePostComment src={"https://bit.ly/ryan-florence"} />
-                    <ProfilePostComment src={"https://bit.ly/ryan-florence"} />
-                    <ProfilePostComment src={"https://bit.ly/ryan-florence"} />
-                    <ProfilePostComment src={"https://bit.ly/ryan-florence"} />
-                    <ProfilePostComment src={"https://bit.ly/ryan-florence"} />
                   </Flex>
                 </VStack>
                 <Divider my={4} bg={"gray.8000"} />
 
-                <Flex w={"full"} mt="auto" height={"100%"}>
+                <Flex
+                  w={"full"}
+                  mb="auto"
+                  height={"100%"}
+                  justifyContent={"center"}
+                  alignItems={"end"}
+                >
                   <PostFooter activeProfile={true} />
                 </Flex>
               </Flex>
