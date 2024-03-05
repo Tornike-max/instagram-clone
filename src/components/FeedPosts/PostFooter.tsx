@@ -6,6 +6,7 @@ import {
   InputGroup,
   InputRightElement,
   Text,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { HiOutlineHeart } from "react-icons/hi2";
@@ -17,6 +18,7 @@ import { useAuthStore } from "../../store/authStore";
 import { useNavigate } from "react-router-dom";
 import { useLikePost } from "../../hooks/useLikePost";
 import { DocumentData } from "firebase/firestore";
+import PostCommentModal from "./PostCommentModal";
 
 export default function PostFooter({
   creatorProfile,
@@ -32,6 +34,7 @@ export default function PostFooter({
   const [comment, setComment] = useState("");
   const authUser = useAuthStore((state) => state.user);
   const { liked, likes, handleLikePost } = useLikePost(post);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleComment = async () => {
     if (!authUser) {
@@ -83,10 +86,16 @@ export default function PostFooter({
         pb={4}
       >
         {!isProfilePage && post.comments.length > 0 && (
-          <Text cursor={"pointer"} fontSize={"medium"} textColor={"gray.500"}>
+          <Text
+            onClick={onOpen}
+            cursor={"pointer"}
+            fontSize={"medium"}
+            textColor={"gray.500"}
+          >
             View all {creatorProfile?.comments?.length} comments
           </Text>
         )}
+        <PostCommentModal isOpen={isOpen} onClose={onClose} post={post} />
 
         <InputGroup>
           <Input

@@ -3,19 +3,22 @@ import { DocumentData } from "firebase/firestore";
 import { useFollowUser } from "../../hooks/useFollowUser";
 import { useAuthStore } from "../../store/authStore";
 import { UserType } from "../../types/types";
+import { userInfo } from "os";
+import { useNavigate } from "react-router-dom";
 
 export default function SuggestedUser({
   user,
   setUser,
 }: {
   user: DocumentData | null;
-  setUser: React.Dispatch<React.SetStateAction<DocumentData | UserType>>;
+  setUser: (userProfile: UserType) => void;
 }) {
   const { isFollowing, isUpdating, handleFollowUser } = useFollowUser(
     user?.uid
   );
 
   const authUser = useAuthStore((state) => state.user);
+  const navigate = useNavigate();
 
   const onFollowUser = async () => {
     await handleFollowUser();
@@ -29,19 +32,39 @@ export default function SuggestedUser({
                 follower.uid !== authUser?.uid
             )
           : [...user.followers, authUser],
+        uid: "",
+        username: "",
+        email: "",
+        fullname: "",
+        profilePicURL: "",
+        bio: "",
+        createdAt: 0,
+        following: [],
+        posts: [],
       });
   };
   return (
     <Flex width="full" justifyContent={"space-between"} alignItems={"center"}>
       <Flex alignItems={"center"} gap={2}>
-        <Avatar cursor={"pointer"} size="md" src={user?.profilePicURL} />
+        <Avatar
+          onClick={() => navigate(`${user?.username}`)}
+          cursor={"pointer"}
+          size="md"
+          src={user?.profilePicURL}
+        />
         <Box
           alignItems={"start"}
           flexDirection={"column"}
           justifyContent={"center"}
           gap={1}
         >
-          <Text fontSize={"bold"}>{user?.username}</Text>
+          <Text
+            cursor={"pointer"}
+            onClick={() => navigate(`${user?.username}`)}
+            fontSize={"bold"}
+          >
+            {user?.username}
+          </Text>
           <Text fontSize={13} color="gray.400">
             {user?.followers.length} Followers
           </Text>

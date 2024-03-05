@@ -1,12 +1,14 @@
-import { Avatar, Flex, Text } from "@chakra-ui/react";
+import { Avatar, Button, Flex, Text } from "@chakra-ui/react";
 import { Link } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 import useUserProfileStore from "../../store/userProfileStore";
+import { useSignOutUser } from "../../hooks/useSignOutUser";
 
 export default function SuggestedHeader() {
   const authUser = useAuthStore((state) => state.user);
   const activeUser = useUserProfileStore((store) => store.userProfile);
+  const { loading, signout } = useSignOutUser();
   return (
     <Flex
       w="full"
@@ -31,18 +33,18 @@ export default function SuggestedHeader() {
         </Link>
       </Flex>
 
-      <Link
-        as={RouterLink}
-        to="/auth"
+      <Button
         fontSize={14}
         fontWeight={"medium"}
         color="blue.400"
         _hover={{ color: "white" }}
         style={{ textDecoration: "none" }}
         cursor={"pointer"}
+        isLoading={loading}
+        onClick={() => signout()}
       >
         Log out
-      </Link>
+      </Button>
     </Flex>
   );
 }

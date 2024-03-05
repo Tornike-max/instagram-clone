@@ -33,6 +33,7 @@ import {
 } from "firebase/firestore";
 import { firestore, storage } from "../../firebase/firebase";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
+import { useLocation } from "react-router-dom";
 
 export default function CreatePost() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -144,9 +145,12 @@ export function useCreatePost() {
   const authUser = useAuthStore((state) => state.user);
   const createPost = usePostsStore((state) => state?.createPost);
   const addPost = useUserProfileStore((state) => state.addPost);
+  const userProfile = useUserProfileStore((state) => state.userProfile);
+  const { pathname } = useLocation();
 
   const createUserPost = async (caption: string, selectedFile: string) => {
     if (!selectedFile) throw new Error("You can't create post without image ");
+
     try {
       setIsLoading(true);
       const newPost = {
@@ -174,9 +178,11 @@ export function useCreatePost() {
 
       postRef && (await updateDoc(postRef, { imageURL: newImage }));
 
-      createPost({ ...newPost, id: postRef.id });
+      if (pathname === `${authUser?.username}`)
+        createPost({ ...newPost, id: postRef.id });
 
-      addPost({ ...newPost, id: postRef.id });
+      if (authUser?.uid === userProfile?.uid || "")
+        addPost({ ...newPost, id: postRef.id });
 
       showToast("Success", "Post Created Successfully", "success");
     } catch (error) {
