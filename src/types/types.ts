@@ -8,7 +8,7 @@ export interface UserType {
   createdAt: number;
   followers: string[];
   following: string[];
-  posts: never[];
+  posts: string[];
 }
 
 export type EditAuthUserType = {

@@ -12,25 +12,27 @@ const useUserProfileStore = create<ProfileTypes>((set) => ({
   userProfile: null,
   setUserProfile: (userProfile) => set({ userProfile }),
   addPost: (post) =>
-    set((state) => {
-      if (!state.userProfile) return state;
-      return {
+    set(
+      (state: ProfileTypes): ProfileTypes => ({
+        ...state,
         userProfile: {
-          ...state.userProfile,
-          posts: [post.id, ...state.userProfile.posts],
+          ...state.userProfile!,
+          posts: [post?.id || "", ...(state.userProfile?.posts || [])],
         },
-      };
-    }),
+      })
+    ),
   deletePost: (postId: string) =>
-    set((state) => {
-      if (!state.userProfile) return state;
-      return {
+    set(
+      (state: ProfileTypes): ProfileTypes => ({
+        ...state,
         userProfile: {
-          ...state.userProfile,
-          posts: state.userProfile.posts.filter((id: string) => id !== postId),
+          ...state.userProfile!,
+          posts:
+            state.userProfile?.posts.filter((id: string) => id !== postId) ||
+            [],
         },
-      };
-    }),
+      })
+    ),
 }));
 
 export default useUserProfileStore;
