@@ -1,4 +1,4 @@
-import { Flex, Avatar, Text, Divider } from "@chakra-ui/react";
+import { Flex, Avatar, Text } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { timeAgo } from "../../utils/timeAgo";
 import { PostType } from "../../types/types";

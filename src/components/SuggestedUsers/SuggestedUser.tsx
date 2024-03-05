@@ -3,7 +3,6 @@ import { DocumentData } from "firebase/firestore";
 import { useFollowUser } from "../../hooks/useFollowUser";
 import { useAuthStore } from "../../store/authStore";
 import { UserType } from "../../types/types";
-import { userInfo } from "os";
 import { useNavigate } from "react-router-dom";
 
 export default function SuggestedUser({

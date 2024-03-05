@@ -6,7 +6,6 @@ import { useGetUserProfileById } from "../../hooks/useGetUserProfileById";
 
 export default function FeedPost({ post }: { post: PostType }) {
   const { user } = useGetUserProfileById(post.createdBy || "");
-  console.log(user);
   return (
     <>
       <PostHeader user={user} createdAt={post.createdAt} />

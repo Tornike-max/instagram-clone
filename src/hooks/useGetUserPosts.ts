@@ -25,12 +25,22 @@ export function useGetUserPosts() {
 
         const postSnapshot = await getDocs(q);
 
-        const posts: PostType[] = [];
+        const userPosts: PostType[] = [];
 
         postSnapshot.forEach((doc) => {
-          posts.push({ ...doc.data(), id: doc.id });
+          const postData = doc.data();
+          const post: PostType = {
+            id: doc.id,
+            caption: postData.caption,
+            likes: postData.likes,
+            comments: postData.comments,
+            createdAt: postData.createdAt,
+            createdBy: postData.createdBy,
+            imageURL: postData.imageURL,
+          };
+          userPosts.push(post);
         });
-        setPost(posts);
+        setPost(userPosts);
       } catch (error) {
         showToast("Error", "Error while getting posts", "error");
         setPost([]);

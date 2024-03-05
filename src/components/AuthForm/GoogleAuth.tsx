@@ -40,7 +40,7 @@ export default function GoogleAuth({ isLogin }: { isLogin: boolean }) {
           uid: newUser?.user.uid,
           username: newUser?.user.email?.split("@")[0],
           email: newUser?.user.email,
-          fullnane: newUser?.user.displayName,
+          fullname: newUser?.user.displayName,
           profilePicURL: newUser?.user.displayName,
           bio: "",
           createdAt: Date.now(),
@@ -53,7 +53,7 @@ export default function GoogleAuth({ isLogin }: { isLogin: boolean }) {
           userDoc
         );
         localStorage.setItem("user-info", JSON.stringify(newUser));
-        activeUser(userDoc);
+        activeUser(userDoc as UserType);
       }
     } catch (error) {
       showToast("Error", "Can't login new user", "error");

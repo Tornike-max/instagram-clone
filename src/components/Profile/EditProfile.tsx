@@ -54,7 +54,6 @@ export default function EditProfile({
     updateUserProfile(data, selectedFile);
     onClose();
   };
-  console.log(authUser);
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />

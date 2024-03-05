@@ -30,7 +30,7 @@ export default function PostCommentModal({
   const authUser = useAuthStore((state) => state.user);
   const [comment, setComment] = useState("");
   const { handleCommentPost, isCommenting } = usePostComment();
-  const scrollContainerRef = useRef(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const scrollToBottom = () => {

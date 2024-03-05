@@ -18,15 +18,15 @@ export type EditAuthUserType = {
   profilePicURL: string;
 };
 
-export type PostType = {
+export interface PostType {
+  id?: string;
   caption: string;
-  likes: never[];
-  comments: never[];
+  likes: string[];
+  comments: CommentType[];
   createdAt: number;
   createdBy: string;
   imageURL: string;
-  id?: string;
-};
+}
 
 export type CommentType = {
   comment: string;

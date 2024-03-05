@@ -49,7 +49,7 @@ export default function ProfilePost({ post }: { post: PostType }) {
       await deleteObject(imageRef);
 
       const userRef = authUser && doc(firestore, "users", authUser?.uid);
-      await deleteDoc(doc(firestore, "posts", post.id));
+      await deleteDoc(doc(firestore, "posts", post.id || ""));
 
       userRef &&
         (await updateDoc(userRef, {
@@ -211,7 +211,7 @@ export default function ProfilePost({ post }: { post: PostType }) {
                   justifyContent={"center"}
                   alignItems={"end"}
                 >
-                  <PostFooter post={post} activeProfile={true} />
+                  <PostFooter post={post} isProfilePage={true} />
                 </Flex>
               </Flex>
             </Flex>

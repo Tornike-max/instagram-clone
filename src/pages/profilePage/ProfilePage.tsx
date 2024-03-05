@@ -1,16 +1,14 @@
 import {
   Container,
   Flex,
-  Link,
   Skeleton,
   SkeletonCircle,
-  Text,
   VStack,
 } from "@chakra-ui/react";
 import ProfileHeader from "./ProfileHeader";
 import ProfileTabs from "./ProfileTabs";
 import ProfilePosts from "./ProfilePosts";
-import { Link as RouterLink, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useGetUserProfileByUsername } from "../../hooks/useGetUserProfileByUsername";
 
 export default function ProfilePage() {
@@ -29,22 +27,22 @@ export default function ProfilePage() {
   );
 }
 
-const UserNotFound = () => {
-  return (
-    <Flex flexDir="column" textAlign={"center"} mx={"auto"}>
-      <Text fontSize={"2xl"}>User Not Found</Text>
-      <Link
-        as={RouterLink}
-        to={"/"}
-        color={"blue.500"}
-        w={"max-content"}
-        mx={"auto"}
-      >
-        Go home
-      </Link>
-    </Flex>
-  );
-};
+// const UserNotFound = () => {
+//   return (
+//     <Flex flexDir="column" textAlign={"center"} mx={"auto"}>
+//       <Text fontSize={"2xl"}>User Not Found</Text>
+//       <Link
+//         as={RouterLink}
+//         to={"/"}
+//         color={"blue.500"}
+//         w={"max-content"}
+//         mx={"auto"}
+//       >
+//         Go home
+//       </Link>
+//     </Flex>
+//   );
+// };
 
 const ProfileHeaderSkeleton = () => {
   return (

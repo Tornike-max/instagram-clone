@@ -1,4 +1,11 @@
-import { collection, getDocs, query, where } from "firebase/firestore";
+import {
+  DocumentData,
+  QueryDocumentSnapshot,
+  collection,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { firestore } from "../firebase/firebase";
 import { PostType } from "../types/types";
@@ -15,8 +22,9 @@ export const useGetFeedPosts = () => {
   useEffect(() => {
     const getPosts = async () => {
       setLoading(true);
-      if (authUser?.following.length === 0) {
+      if (!authUser || authUser?.following.length === 0) {
         setPosts([]);
+        setLoading(false);
         return;
       }
       const q = query(
@@ -26,21 +34,28 @@ export const useGetFeedPosts = () => {
 
       try {
         const querySnapshot = await getDocs(q);
-        const feedPosts: PostType[] | { id: string }[] = [];
+        const feedPosts: PostType[] = [];
 
-        querySnapshot.forEach((post) => {
-          feedPosts.push({ id: post.id, ...post.data() });
+        querySnapshot.forEach(
+          (post: QueryDocumentSnapshot<DocumentData, DocumentData>) => {
+            feedPosts.push({ id: post.id, ...post.data() } as PostType);
+          }
+        );
+        feedPosts.sort((a, b) => {
+          if (a.id && b.id) {
+            return a.id.localeCompare(b.id);
+          }
+          return 0;
         });
-        feedPosts.sort((a, b) => a.id - b.id);
 
-        setPosts(feedPosts as PostType[]);
+        setPosts(feedPosts);
       } catch (error) {
         showToast("Error", "Error while getting posts", "error");
       } finally {
         setLoading(false);
       }
     };
-    if (authUser) getPosts();
+    getPosts();
   }, [authUser, setPosts, showToast]);
 
   return { posts, loading };

@@ -12,7 +12,6 @@ export default function PostHeader({
   createdAt: number;
 }) {
   const { handleFollowUser, isFollowing, isUpdating } = useFollowUser(user.uid);
-  console.log("first");
   return (
     <Flex
       width={"full"}
