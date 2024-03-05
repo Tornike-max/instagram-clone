@@ -27,3 +27,16 @@ export type PostType = {
   imageURL: string;
   id?: string;
 };
+
+export type CommentType = {
+  comment: string;
+  createdAt: number;
+  createdBy: string | undefined;
+  postId: string;
+};
+
+export type LikeType = {
+  likedAt: number;
+  likedBy: string | undefined;
+  postId: string;
+};

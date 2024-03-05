@@ -16,12 +16,8 @@ export default function ProfilePosts() {
       >
         {isLoading ? (
           [0, 1, 2].map((_, indx) => (
-            <Skeleton key={indx} height={"310px"}>
+            <Skeleton key={indx} height={"300px"}>
               <div>contents wrapped</div>
-              <div>won't be visible</div>
-              <div>won't be visible</div>
-              <div>won't be visible</div>
-              <div>won't be visible</div>
             </Skeleton>
           ))
         ) : (

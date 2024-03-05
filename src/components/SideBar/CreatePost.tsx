@@ -24,7 +24,6 @@ import { useShowToast } from "../../hooks/useShowToast";
 import { useAuthStore } from "../../store/authStore";
 import { usePostsStore } from "../../store/userPostsStore";
 import useUserProfileStore from "../../store/userProfileStore";
-import { useLocation } from "react-router-dom";
 import {
   addDoc,
   arrayUnion,
@@ -47,6 +46,9 @@ export default function CreatePost() {
     if (!selectedFile || !caption)
       throw new Error("You can't create post without image");
     await createUserPost(caption, selectedFile || "");
+    setSelectedFile(null);
+    setCaption("");
+    onClose();
   }
 
   return (
@@ -142,7 +144,6 @@ export function useCreatePost() {
   const authUser = useAuthStore((state) => state.user);
   const createPost = usePostsStore((state) => state?.createPost);
   const addPost = useUserProfileStore((state) => state.addPost);
-  const { pathname } = useLocation();
 
   const createUserPost = async (caption: string, selectedFile: string) => {
     if (!selectedFile) throw new Error("You can't create post without image ");

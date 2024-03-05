@@ -19,7 +19,7 @@ import { FaComment } from "react-icons/fa";
 import { HiOutlineTrash } from "react-icons/hi2";
 import ProfilePostComment from "./ProfilePostComment";
 import PostFooter from "../../components/FeedPosts/PostFooter";
-import { PostType } from "../../types/types";
+import { CommentType, PostType } from "../../types/types";
 import useUserProfileStore from "../../store/userProfileStore";
 import { useAuthStore } from "../../store/authStore";
 import { useShowToast } from "../../hooks/useShowToast";
@@ -28,6 +28,7 @@ import { firestore, storage } from "../../firebase/firebase";
 import { arrayRemove, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { usePostsStore } from "../../store/userPostsStore";
 import { useState } from "react";
+import Caption from "./Caption";
 
 export default function ProfilePost({ post }: { post: PostType }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -39,7 +40,6 @@ export default function ProfilePost({ post }: { post: PostType }) {
   const deleteUserProfilePost = useUserProfileStore(
     (state) => state.deletePost
   );
-  console.log(post);
 
   const handleDeletePost = async () => {
     if (isDeleting) return;
@@ -55,9 +55,11 @@ export default function ProfilePost({ post }: { post: PostType }) {
         (await updateDoc(userRef, {
           posts: arrayRemove(post.id),
         }));
+
       deletePost(post.id || "");
       deleteUserProfilePost(post.id || "");
       showToast("Success", "Post Deleted Successfully", "success");
+      onClose();
     } catch (error) {
       showToast("Error", "Error while deleting post", "error");
     } finally {
@@ -188,10 +190,16 @@ export default function ProfilePost({ post }: { post: PostType }) {
                     maxH={"370px"}
                     overflowY={"auto"}
                   >
-                    <ProfilePostComment src={"https://bit.ly/dan-abramov"} />
-                    <ProfilePostComment
-                      src={"https://bit.ly/tioluwani-kolawole"}
-                    />
+                    <Caption post={post} />
+                    <Divider />
+                    {post.comments.map((comment: CommentType) => (
+                      <ProfilePostComment
+                        key={comment?.createdAt}
+                        comment={comment.comment}
+                        userId={comment.createdBy || ""}
+                        createdAt={comment.createdAt}
+                      />
+                    ))}
                   </Flex>
                 </VStack>
                 <Divider my={4} bg={"gray.8000"} />
@@ -203,7 +211,7 @@ export default function ProfilePost({ post }: { post: PostType }) {
                   justifyContent={"center"}
                   alignItems={"end"}
                 >
-                  <PostFooter activeProfile={true} />
+                  <PostFooter post={post} activeProfile={true} />
                 </Flex>
               </Flex>
             </Flex>

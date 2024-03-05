@@ -4,24 +4,19 @@ import {
   Flex,
   Skeleton,
   SkeletonCircle,
+  Text,
   VStack,
 } from "@chakra-ui/react";
 import FeedPost from "./FeedPost";
-import { useState, useEffect } from "react";
+import { useGetFeedPosts } from "../../hooks/useGetFeedPosts";
 
 export default function FeedPosts() {
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
-  }, []);
+  const { posts, loading } = useGetFeedPosts();
 
   return (
     <Container maxW={"container.sm"} px={2}>
-      {isLoading &&
-        [1, 2, 3].map((_, i) => (
+      {loading &&
+        [0, 1, 2].map((_, i) => (
           <VStack w={"full"} key={i} gap={4} alignItems={"flex-start"} mb={10}>
             <Flex gap={2}>
               <SkeletonCircle size="10" />
@@ -35,11 +30,18 @@ export default function FeedPosts() {
             </Skeleton>
           </VStack>
         ))}
-      {!isLoading && (
+      {!loading && posts.length > 0 && (
         <>
-          <FeedPost />
-          <FeedPost />
-          <FeedPost />
+          {posts.map((post) => (
+            <FeedPost post={post} />
+          ))}
+        </>
+      )}
+      {!loading && posts.length === 0 && (
+        <>
+          <Text fontSize={"medium"} color="red.400">
+            It Looks like you don't have any friend
+          </Text>
         </>
       )}
     </Container>

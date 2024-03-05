@@ -1,6 +1,18 @@
-import { Avatar, Box, Flex, Text } from "@chakra-ui/react";
+import { Avatar, Box, Button, Flex, Link, Text } from "@chakra-ui/react";
+import { DocumentData } from "firebase/firestore";
+import { timeAgo } from "../../utils/timeAgo";
+import { Link as RouterLink } from "react-router-dom";
+import { useFollowUser } from "../../hooks/useFollowUser";
 
-export default function PostHeader() {
+export default function PostHeader({
+  user,
+  createdAt,
+}: {
+  user: DocumentData;
+  createdAt: number;
+}) {
+  const { handleFollowUser, isFollowing, isUpdating } = useFollowUser(user.uid);
+  console.log("first");
   return (
     <Flex
       width={"full"}
@@ -13,19 +25,30 @@ export default function PostHeader() {
       borderRadius={"10px"}
     >
       <Box fontSize={12} display={"flex"} alignItems={"center"} gap={2}>
-        <Avatar cursor={"pointer"} src="/img1.png" size={"sm"} />
-        <Text>Tornike</Text>
+        <Link
+          display={"flex"}
+          alignItems={"center"}
+          gap={2}
+          as={RouterLink}
+          to={`/${user?.username}`}
+        >
+          <Avatar cursor={"pointer"} src={user?.profilePicURL} size={"sm"} />
+          <Text>{user?.fullname}</Text>
+        </Link>
         <Box height={"1px"} bg={"gray.500"} width={"5px"}></Box>
-        <Text textColor={"gray.400"}>1w</Text>
+        <Text textColor={"gray.400"}>{timeAgo(createdAt)}</Text>
       </Box>
       <Box display={"flex"} alignItems={"center"}>
-        <Text
+        <Button
           textColor={"blue.400"}
           _hover={{ color: "white" }}
           cursor={"pointer"}
+          background={"none"}
+          onClick={handleFollowUser}
+          isLoading={isUpdating}
         >
-          Unfollow
-        </Text>
+          {isFollowing ? "Unfollow" : "Follow"}
+        </Button>
       </Box>
     </Flex>
   );
